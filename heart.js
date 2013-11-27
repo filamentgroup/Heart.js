@@ -60,4 +60,8 @@
       self._tick();
     }, this.interval );
   };
+
+  proto.stop = function() {
+    w.clearInterval( this.intervalId );
+  };
 })( this );
