@@ -1,7 +1,7 @@
 (function( w ) {
   "use strict";
 
-  if( !("querySelectorAll" in w ) ){
+  if( !("querySelectorAll" in w.document ) ){
     return;
   }
 
