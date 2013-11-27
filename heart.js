@@ -1,14 +1,13 @@
 (function( w ) {
   "use strict";
 
-  var heart, proto, transform3d, raf = "requestAnimationFrame" in window && !!Function.prototype.bind;
-
   var doc = w.document;
 
   if( !("querySelectorAll" in doc ) ){
     return;
   }
-  var heart, proto, transform3d, raf = "requestAnimationFrame" in w;
+
+  var heart, proto, transform3d, raf = "requestAnimationFrame" in w && !!Function.prototype.bind;
 
   heart = w.Heart = function( options ) {
     this.distance = options.distance || 1;
@@ -79,7 +78,7 @@
     // head to the tail of the list
     if( this.currentScrollLeft > this.headWidth + 20 ) {
       if( raf ) {
-        w.requestAnimationFrame( this._moveHead.bind(this) );
+        this.currentraf = w.requestAnimationFrame( this._moveHead.bind(this) );
       } else {
         this._moveHead();
       }
@@ -121,14 +120,15 @@
     });
   };
 
+  proto._rafbeat = function(){
+    this._tick();
+    this.currentraf = w.requestAnimationFrame( this._rafbeat.bind(this) );
+  };
+
   proto.start = function() {
     var self = this, beat;
      if( raf ) {
-      beat = function() {
-        self._tick();
-        w.requestAnimationFrame( beat );
-      };
-      w.requestAnimationFrame( beat );
+      this.currentraf = w.requestAnimationFrame( this._rafbeat.bind(this) );
     } else {
       this.intervalId = w.setInterval(function() {
         self._tick();
@@ -137,6 +137,10 @@
   };
 
   proto.stop = function() {
-    w.clearInterval( this.intervalId );
+    if( raf ){
+      w.cancelAnimationFrame( this.currentraf );
+    } else {
+      w.clearInterval( this.intervalId );
+    }
   };
 })( this );
