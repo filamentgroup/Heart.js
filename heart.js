@@ -127,7 +127,7 @@
     this.element.addEventListener( "dragmove", function(e){
       e.stopPropagation();
       var detail = e.detail;
-      self._setScrollLeft( -detail.deltaX );
+      self._setSlideLeft( -detail.deltaX );
     });
   };
 
