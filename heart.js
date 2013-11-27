@@ -1,7 +1,9 @@
 (function( w ) {
   "use strict";
 
-  if( !("querySelectorAll" in w.document ) ){
+  var doc = w.document;
+
+  if( !("querySelectorAll" in doc ) ){
     return;
   }
 
@@ -57,6 +59,13 @@
 
   proto._head = function() {
     return this.scrollable.querySelector( "p" ); // TODO: Could be any element; should probably be configurable.
+  };
+
+  proto._bindScrubbingEvents = function(){
+    var self = this;
+    this.element.addEventListener( "mouseover" , function(e){
+      self.stop();
+    });
   };
 
   proto.start = function() {
