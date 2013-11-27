@@ -10,21 +10,6 @@
 	var heart, proto, transformSupport,
 			raf = "requestAnimationFrame" in w && !!Function.prototype.bind;
 
-	heart = w.Heart = function( options ) {
-		this.distance = options.distance || 1;
-		this.interval = options.interval || 10;
-		this.element = options.element;
-		this.scrollable = options.scrollable || this.element.querySelector( "ul" );
-
-		// store the value, less repainting
-		this.currentScrollLeft = this.scrollable.scrollLeft;
-		this.headWidth = this._head().offsetWidth;
-
-		if( options.start ) {
-			this.start();
-		}
-	};
-
 	transformSupport = (function() {
 		var fakeBody,
 			de = doc.documentElement,
@@ -55,13 +40,34 @@
 		return !!ret;
 	}());
 
+	heart = w.Heart = function( options ) {
+		this.distance = options.distance || 1;
+		this.interval = options.interval || 10;
+		this.element = options.element;
+		this.scrollable = options.scrollable || this.element.querySelector( "ul" );
+
+		// store the value, less repainting
+		this.currentScrollLeft = this.scrollable.scrollLeft;
+		this.headWidth = this._head().offsetWidth;
+
+		this._setOffset = this[ "_set" + ( this._transformSupport() ? "Slide" : "Scroll" ) + "Left" ];
+
+		if( options.start ) {
+			this.start();
+		}
+	};
+
 	proto = heart.prototype;
+
+	proto._transformSupport = function() {
+		return transformSupport;
+	};
 
 	proto._tick = function() {
 		var newScrollLeft, head;
 
 		// increment the current scroll appropriately
-		this[ "_set" + ( transformSupport ? "Slide" : "Scroll" ) + "Left" ]( this.currentScrollLeft + this.distance );
+		this._setOffset( this.currentScrollLeft + this.distance );
 
 		// if the current scrolling value is larger than the stored width
 		// for the head of the list by a small buffer, move the out of view
@@ -133,7 +139,7 @@
 			if( raf ){
 				self._setSlideLeft( self.currentScrollLeft - detail.moveEvent.webkitMovementX );
 			} else {
-				self._setScrollLeft( -detail.deltaX );
+				self._setScrollLeft( self.currentScrollLeft - detail.moveEvent.webkitMovementX );
 			}
 		});
 	};
