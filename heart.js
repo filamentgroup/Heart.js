@@ -1,7 +1,8 @@
-(function() {
+(function( w ) {
+  "use strict";
   var heart, proto;
 
-  heart = window.Heart = function( options ) {
+  heart = w.Heart = function( options ) {
     this.distance = options.distance || 1;
     this.interval = options.interval || 10;
     this.element = options.element;
@@ -55,8 +56,8 @@
 
   proto.start = function() {
     var self = this;
-    this.intervalId = setInterval(function() {
+    this.intervalId = w.setInterval(function() {
       self._tick();
     }, this.interval );
   };
-})();
+})( this );
