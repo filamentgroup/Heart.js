@@ -6,8 +6,7 @@
   if( !("querySelectorAll" in doc ) ){
     return;
   }
-
-  var heart, proto;
+  var heart, proto, transform3d, raf = "requestAnimationFrame" in w;
 
   heart = w.Heart = function( options ) {
     this.distance = options.distance || 1;
@@ -24,19 +23,64 @@
     }
   };
 
+  transform3d = (function() {
+    var fakeBody,
+      de = doc.documentElement,
+      bod = doc.body || (function() {
+        fakeBody = doc.createElement('body');
+        return de.insertBefore( fakeBody, de.firstElementChild || de.firstChild);
+      }()),
+      el = doc.createElement( "div" ),
+      prop = "transform-3d",
+      vendors = [ "Webkit", "Moz", "O" ],
+      mm = "matchMedia" in w,
+      ret = false,
+      transforms, t;
+
+    if( mm ) {
+      ret = w.matchMedia( "(-" + vendors.join( "-" + prop + "),(-" ) + "-" + prop + "),(" + prop + ")" ).matches;
+    }
+
+    if( !ret ) {
+      transforms = {
+        "MozTransform": "-moz-transform",
+        "transform": "transform"
+      };
+
+      bod.appendChild( el );
+
+      for ( t in transforms ) {
+        if ( el.style[ t ] !== undefined ) {
+          el.style[ t ] = "translate3d( 100px, 1px, 1px )";
+          ret = w.getComputedStyle( el ).getPropertyValue( transforms[ t ] );
+        }
+      }
+    }
+
+    if( fakeBody ) {
+      de.removeChild( fakeBody );
+    }
+
+    return ( !!ret && ret !== "none" );
+  }());
+
   proto = heart.prototype;
 
   proto._tick = function() {
     var newScrollLeft, head;
 
     // increment the current scroll appropriately
-    this._setScrollLeft( this.currentScrollLeft + this.distance );
+    this[ "_set" + ( transform3d ? "Slide" : "Scroll" ) + "Left" ]( this.currentScrollLeft + this.distance );
 
     // if the current scrolling value is larger than the stored width
     // for the head of the list by a small buffer, move the out of view
     // head to the tail of the list
     if( this.currentScrollLeft > this.headWidth + 20 ) {
-      this._moveHead();
+      if( raf ) {
+        raf( this._moveHead );
+      } else {
+        this._moveHead();
+      }
     }
   };
 
@@ -57,6 +101,13 @@
     this.currentScrollLeft = this.element.scrollLeft = value;
   };
 
+  proto._setSlideLeft = function( value ) {
+    var curr = ( this.scrollable.style.webkitTransform || "0" ).match(/([0-9])/); //TODO: There must be a better way of doing this.
+    this.scrollable.style.webkitTransform = "translateX(" + -value + "px)";
+
+    this.currentScrollLeft = curr = value;
+  };
+
   proto._head = function() {
     return this.scrollable.querySelector( "p" ); // TODO: Could be any element; should probably be configurable.
   };
@@ -69,10 +120,18 @@
   };
 
   proto.start = function() {
-    var self = this;
-    this.intervalId = w.setInterval(function() {
-      self._tick();
-    }, this.interval );
+    var self = this, beat;
+     if( raf ) {
+      beat = function() {
+        self._tick();
+        raf( beat );
+      };
+      raf( beat );
+    } else {
+      this.intervalId = w.setInterval(function() {
+        self._tick();
+      }, this.interval );
+    }
   };
 
   proto.stop = function() {
