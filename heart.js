@@ -88,11 +88,7 @@
 		this.scrollable.appendChild(head);
 
 		// make sure the scroll left accounts for the movement of the scrolling
-		if( raf ){
-			this._setScrollLeft( this.currentScrollLeft - head.offsetWidth );
-		} else {
-			this._setSlideLeft( this.currentScrollLeft - head.offsetWidth );
-		}
+		this._setOffset( this.currentScrollLeft - head.offsetWidth );
 
 		// set the new head of the list
 		this.headWidth = this._head().offsetWidth;
@@ -136,11 +132,7 @@
 		this.element.addEventListener( "dragmove", function(e){
 			e.stopPropagation();
 			var detail = e.detail;
-			if( raf ){
-				self._setSlideLeft( self.currentScrollLeft - detail.moveEvent.webkitMovementX );
-			} else {
-				self._setScrollLeft( self.currentScrollLeft - detail.moveEvent.webkitMovementX );
-			}
+			self._setOffset( self.currentScrollLeft - detail.moveEvent.webkitMovementX );
 		});
 	};
 
