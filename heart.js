@@ -1,5 +1,10 @@
 (function( w ) {
   "use strict";
+
+  if( !("querySelectorAll" in w ) ){
+    return;
+  }
+
   var heart, proto;
 
   heart = w.Heart = function( options ) {
