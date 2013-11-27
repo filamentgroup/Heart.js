@@ -131,8 +131,9 @@
 		this.element.addEventListener( "mouseup", w.mouseDrag );
 		this.element.addEventListener( "dragmove", function(e){
 			e.stopPropagation();
-			var detail = e.detail;
-			self._setOffset( self.currentScrollLeft - detail.moveEvent.webkitMovementX );
+			var detail = e.detail,
+				movement = detail.moveEvent.webkitMovementX ? detail.moveEvent.webkitMovementX : detail.moveEvent.mozMovementX;
+			self._setOffset( self.currentScrollLeft - movement );
 		});
 	};
 
