@@ -104,6 +104,7 @@
 		</div>
 
 		<script src="heart.js"></script>
+		<script src="events.js"></script>
 		<script>
 		var heart = document.querySelector( ".heart" );
 
@@ -112,6 +113,11 @@
 			scrollable: heart.querySelector( ".scroller" ),
 			start: true
 		});
+
+		document.addEventListener( "DOMContentLoaded", function( e ){
+			h.bindEvents();
+		});
+
 		</script>
 	</body>
 </html>

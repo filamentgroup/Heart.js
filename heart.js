@@ -113,16 +113,29 @@
     return this.scrollable.querySelector( "p" ); // TODO: Could be any element; should probably be configurable.
   };
 
-  proto._bindScrubbingEvents = function(){
-    var self = this;
-    this.element.addEventListener( "mouseover" , function(e){
-      self.stop();
-    });
-  };
-
   proto._rafbeat = function(){
     this._tick();
     this.currentraf = w.requestAnimationFrame( this._rafbeat.bind(this) );
+  };
+
+  proto.bindEvents = function(){
+    var self = this;
+    this.element.addEventListener( "mouseover" , function(e){
+      self.stop();
+      return false;
+    });
+    this.element.addEventListener( "mouseout" , function(e){
+      self.start();
+      return false;
+    });
+    this.element.addEventListener( "mousedown", w.mouseDrag );
+    this.element.addEventListener( "mousemove", w.mouseDrag );
+    this.element.addEventListener( "mouseup", w.mouseDrag );
+    this.element.addEventListener( "dragmove", function(e){
+      e.stopPropagation();
+      var detail = e.detail;
+      self._setScrollLeft( -detail.deltaX );
+    });
   };
 
   proto.start = function() {
