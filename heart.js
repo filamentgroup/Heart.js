@@ -8,8 +8,7 @@
   }
 
   var heart, proto, transformSupport,
-      raf = "requestAnimationFrame" in window && !!Function.prototype.bind,
-      doc = w.document;
+      raf = "requestAnimationFrame" in w && !!Function.prototype.bind;
 
   heart = w.Heart = function( options ) {
     this.distance = options.distance || 1;
