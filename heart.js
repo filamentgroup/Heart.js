@@ -77,7 +77,7 @@
     // head to the tail of the list
     if( this.currentScrollLeft > this.headWidth + 20 ) {
       if( raf ) {
-        raf( this._moveHead );
+        w.requestAnimationFrame( this._moveHead );
       } else {
         this._moveHead();
       }
@@ -124,9 +124,9 @@
      if( raf ) {
       beat = function() {
         self._tick();
-        raf( beat );
+        w.requestAnimationFrame( beat );
       };
-      raf( beat );
+      w.requestAnimationFrame( beat );
     } else {
       this.intervalId = w.setInterval(function() {
         self._tick();
