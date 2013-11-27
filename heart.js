@@ -103,7 +103,7 @@
   };
 
   proto._head = function() {
-    return this.scrollable.querySelector( "p" ); // TODO: Could be any element; should probably be configurable.
+    return this.scrollable.childNodes[0];
   };
 
   proto._rafbeat = function(){
