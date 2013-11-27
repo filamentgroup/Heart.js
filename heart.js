@@ -7,7 +7,9 @@
     return;
   }
 
-  var heart, proto, transform3d, raf = "requestAnimationFrame" in w && !!Function.prototype.bind;
+  var heart, proto, transformSupport,
+      raf = "requestAnimationFrame" in window && !!Function.prototype.bind,
+      doc = w.document;
 
   heart = w.Heart = function( options ) {
     this.distance = options.distance || 1;
@@ -24,7 +26,7 @@
     }
   };
 
-  transform3d = (function() {
+  transformSupport = (function() {
     var fakeBody,
       de = doc.documentElement,
       bod = doc.body || (function() {
@@ -32,37 +34,26 @@
         return de.insertBefore( fakeBody, de.firstElementChild || de.firstChild);
       }()),
       el = doc.createElement( "div" ),
-      prop = "transform-3d",
-      vendors = [ "Webkit", "Moz", "O" ],
-      mm = "matchMedia" in w,
       ret = false,
-      transforms, t;
-
-    if( mm ) {
-      ret = w.matchMedia( "(-" + vendors.join( "-" + prop + "),(-" ) + "-" + prop + "),(" + prop + ")" ).matches;
-    }
-
-    if( !ret ) {
       transforms = {
+        "webkitTransform": "-webkit-transform",
         "MozTransform": "-moz-transform",
         "transform": "transform"
       };
 
-      bod.appendChild( el );
+    bod.appendChild( el );
 
-      for ( t in transforms ) {
-        if ( el.style[ t ] !== undefined ) {
-          el.style[ t ] = "translate3d( 100px, 1px, 1px )";
-          ret = w.getComputedStyle( el ).getPropertyValue( transforms[ t ] );
-        }
+    for ( var t in transforms ) {
+      if ( el.style[ t ] !== undefined ) {
+        el.style[ t ] = "scale(1)";
+        ret = w.getComputedStyle( el ).getPropertyValue( transforms[ t ] );
       }
     }
 
     if( fakeBody ) {
       de.removeChild( fakeBody );
     }
-
-    return ( !!ret && ret !== "none" );
+    return !!ret;
   }());
 
   proto = heart.prototype;
@@ -71,7 +62,7 @@
     var newScrollLeft, head;
 
     // increment the current scroll appropriately
-    this[ "_set" + ( transform3d ? "Slide" : "Scroll" ) + "Left" ]( this.currentScrollLeft + this.distance );
+    this[ "_set" + ( transformSupport ? "Slide" : "Scroll" ) + "Left" ]( this.currentScrollLeft + this.distance );
 
     // if the current scrolling value is larger than the stored width
     // for the head of the list by a small buffer, move the out of view
@@ -103,8 +94,10 @@
   };
 
   proto._setSlideLeft = function( value ) {
-    var curr = ( this.scrollable.style.webkitTransform || "0" ).match(/([0-9])/); //TODO: There must be a better way of doing this.
+    var curr = ( this.scrollable.style.transform || "0" ).match(/([0-9])/); //TODO: There must be a better way of doing this.
     this.scrollable.style.webkitTransform = "translateX(" + -value + "px)";
+    this.scrollable.style.MozTransform = "translateX(" + -value + "px)";
+    this.scrollable.style.transform = "translateX(" + -value + "px)"; // TODO: This should probably loop.
 
     this.currentScrollLeft = curr = value;
   };
