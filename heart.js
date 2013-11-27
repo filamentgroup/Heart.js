@@ -1,6 +1,8 @@
 (function( w ) {
   "use strict";
 
+  var heart, proto, transform3d, raf = "requestAnimationFrame" in window && !!Function.prototype.bind;
+
   var doc = w.document;
 
   if( !("querySelectorAll" in doc ) ){
@@ -77,7 +79,7 @@
     // head to the tail of the list
     if( this.currentScrollLeft > this.headWidth + 20 ) {
       if( raf ) {
-        w.requestAnimationFrame( this._moveHead );
+        w.requestAnimationFrame( this._moveHead.bind(this) );
       } else {
         this._moveHead();
       }
