@@ -118,6 +118,7 @@
 
 	proto.bindEvents = function(){
 		var self = this;
+		var currentScrollLeft;
 		this.element.addEventListener( "mouseover" , function(e){
 			self.stop();
 			return false;
@@ -126,26 +127,22 @@
 			self.start();
 			return false;
 		});
-		this.element.addEventListener( "mousedown", w.mouseDrag );
+		this.element.addEventListener( "mousedown", function(e){
+			currentScrollLeft = self.currentScrollLeft;
+			w.mouseDrag(e);
+		} );
 		this.element.addEventListener( "mousemove", w.mouseDrag );
 		this.element.addEventListener( "mouseup", w.mouseDrag );
 		this.element.addEventListener( "dragmove", function(e){
 			e.stopPropagation();
-			var detail = e.detail, moveEvent = e.detail.moveEvent, movement;
-			if( moveEvent ) {
-				if( moveEvent.movementX ){
-					movement = moveEvent.movementX;
-				} else if( moveEvent.webkitMovementX ){
-					movement = moveEvent.webkitMovementX;
-				} else if( moveEvent.mozMovementX ){
-					movement = moveEvent.mozMovementX;
-				} else {
-					movement = 0;
-				}
+			var detail = e.detail, csl;
+
+			if( currentScrollLeft ) {
+				csl = currentScrollLeft;
 			} else {
-				movement = 0;
+				csl = self.currentScrollLeft;
 			}
-			self._setOffset( self.currentScrollLeft - movement );
+			self._setOffset( csl - detail.deltaX );
 		});
 	};
 
