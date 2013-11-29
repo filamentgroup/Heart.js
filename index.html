@@ -112,20 +112,28 @@
 				<p><span>&nbsp;</span>Culpa, nostrum, quo, illo ab eum laborum quisquam veniam aliquam perspiciatis eos non repellat facilis temporibus dolorum animi earum odio cupiditate! Facere.</p>
 			</div>
 		</div>
-
+		
+		
 		<script src="heart.js"></script>
+		<!--[if IE 8]><script src="eventpolyfill.js"></script><![endif]-->
+		<script src="customEvent.js"></script>
 		<script src="events.js"></script>
-		<script>
-		var heart = document.querySelector( ".heart" );
 
-		var h = new window.Heart({
-			element: heart,
-			scrollable: heart.querySelector( ".scroller" ),
-			start: true
-		});
+
+		<script>
 
 		document.addEventListener( "DOMContentLoaded", function( e ){
+
+			var heart = document.querySelector( ".heart" );
+
+			var h = new window.Heart({
+				element: heart,
+				scrollable: heart.querySelector( ".scroller" ),
+				start: true
+			});
+
 			h.bindEvents();
+
 		});
 
 		</script>

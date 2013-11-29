@@ -1,22 +1,3 @@
-// Custom event polyfill for IE9/10
-(function ( w ) {
-	"use strict";
-
-	if( !("CustomEvent" in w ) ){
-		var doc = w.document;
-
-		var CustomEvent = function( event, params ) {
-			params = params || { bubbles: false, cancelable: false, detail: undefined };
-			var evt = doc.createEvent( 'CustomEvent' );
-			evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail );
-			return evt;
-		};
-
-		CustomEvent.prototype = w.CustomEvent.prototype;
-
-		w.CustomEvent = CustomEvent;
-	}
-}(this));
 
 (function(w){
 	"use strict";
