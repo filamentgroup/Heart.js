@@ -121,13 +121,12 @@
 		var currentScrollLeft;
 		this.element.addEventListener( "mouseover" , function(e){
 			self.stop();
-			return false;
 		});
 		this.element.addEventListener( "mouseout" , function(e){
 			self.start();
-			return false;
 		});
 		this.element.addEventListener( "mousedown", function(e){
+			e.stopPropagation();
 			currentScrollLeft = self.currentScrollLeft;
 			w.mouseDrag(e);
 		} );
@@ -147,7 +146,7 @@
 	};
 
 	proto.start = function() {
-		var self = this, beat;
+		var self = this;
 		 if( raf ) {
 			this.currentraf = w.requestAnimationFrame( this._rafbeat.bind(this) );
 		} else {
