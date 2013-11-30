@@ -112,6 +112,7 @@
 
 		instance._tick();
 
+		// TODO this bothers me, the append is delayed.
 		setTimeout(function() {
 			ok( head !== instance._head());
 			start();
