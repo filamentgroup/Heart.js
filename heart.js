@@ -85,7 +85,7 @@
 		head = this._head();
 
 		// move the head to the tail
-		this.scrollable.appendChild(head);
+		this.scrollable.appendChild( head );
 
 		// make sure the scroll left accounts for the movement of the scrolling
 		this._setOffset( this.currentScrollLeft - head.offsetWidth );
@@ -108,7 +108,14 @@
 	};
 
 	proto._head = function() {
-		return this.scrollable.childNodes[0];
+		var head = this.scrollable.childNodes[0];
+
+		while( head.nodeType !== 1 ) {
+			this.scrollable.removeChild( head );
+			head = this.scrollable.childNodes[0];
+		}
+
+		return head;
 	};
 
 	proto._rafbeat = function(){
