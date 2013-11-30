@@ -1,4 +1,5 @@
-// EventListener | MIT/GPL2 | github.com/jonathantneal/EventListener
+// Modification of EventListener | MIT/GPL2 | github.com/jonathantneal/EventListener,
+// starting with https://developer.mozilla.org/en-US/docs/Web/API/EventTarget.addEventListener
 (function( w ){
 	"use strict";
 	var doc = w.document,
