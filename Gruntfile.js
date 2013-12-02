@@ -10,14 +10,19 @@ module.exports = function(grunt) {
 			files: ['Gruntfile.js', 'lib/*.js']
 		},
 		uglify: {
-			IE8: {
+			IE8vanilla: {
 				files: {
-					'dest/heart.ie8.min.js': ['lib/polyfills/eventPolyfill.js', 'lib/heart.js', 'lib/events.js']
+					'vanillajs/dest/heart.ie8.min.js': ['vanillajs/lib/polyfills/eventPolyfill.js', 'vanillajs/lib/heart.js', 'vanillajs/lib/events.js']
 				}
 			},
-			normal: {
+			vanilla: {
 				files: {
-					'dest/heart.min.js': ['lib/polyfills/customEvent.js', 'lib/heart.js', 'lib/events.js']
+					'vanillajs/dest/heart.min.js': ['vanillajs/lib/polyfills/customEvent.js', 'vanillajs/lib/heart.js', 'vanillajs/lib/events.js']
+				}
+			},
+			jquery: {
+				files: {
+					'jquery/dest/heart.min.js': ['jquery/lib/heart.js', 'jquery/lib/events.js']
 				}
 			}
 		}
