@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 			files: ['test/**/*.html']
 		},
 		jshint: {
-			files: ['Gruntfile.js', 'lib/*.js']
+			files: ['Gruntfile.js', 'jquery/lib/*.js', 'vanillajs/lib/*.js']
 		},
 		uglify: {
 			IE8vanilla: {
