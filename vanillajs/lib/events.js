@@ -31,7 +31,7 @@
 			clicked = false;
 		}
 		if( e.type == "mouseout" ) {
-			var moveTo = event.toElement || event.relatedTarget,
+			var moveTo = e.toElement || e.relatedTarget,
 				contains = function( el, parent ) {
 				if( parent ) {
 					while( ( parent = parent.parentNode ) ) {
