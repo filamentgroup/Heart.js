@@ -148,7 +148,12 @@
 			} else {
 				csl = self.currentScrollLeft;
 			}
-			self._setOffset( csl - detail.deltaX );
+
+			/* Set the scroll position to the current left position minus the movement amount, which may be positive or negative.
+			A negative total would mean scrolling past the first item, so instead set the scroll to zero. This could be set to only 
+			set a value when the total is greater than zero, but scrubbing back to the start of the ticker too quickly might cut 
+			off part of the first item — setting the value to zero prevents that. */
+			self._setOffset( csl - detail.deltaX < 0 ? 0 : csl - detail.deltaX );
 		});
 	};
 
