@@ -182,7 +182,8 @@
 			e.stopPropagation();
 			currentScrollLeft = self.currentScrollLeft;
 			w.mouseDrag(e);
-		} );
+		});
+		el.on( "mouseout", w.mouseDrag );
 		el.on( "mousemove mouseup", w.mouseDrag );
 		el.on( "dragmove", function(e, detail){
 			e.stopPropagation();
@@ -197,7 +198,7 @@
 			A negative total would mean scrolling past the first item, so instead set the scroll to zero. This could be set to only 
 			set a value when the total is greater than zero, but scrubbing back to the start of the ticker too quickly might cut 
 			off part of the first item — setting the value to zero prevents that. */
-			self._setOffset( csl - detail.deltaX < 0 ? 0 : csl - detail.deltaX );
+			self._setOffset( csl - detail.deltaX < 0 ? 1 : csl - detail.deltaX );
 		});
 	};
 
