@@ -18,11 +18,17 @@ module.exports = function(grunt) {
 			vanilla: {
 				files: {
 					'vanillajs/dest/heart.min.js': ['vanillajs/lib/polyfills/customEvent.js', 'vanillajs/lib/heart.js', 'vanillajs/lib/events.js']
+				},
+				options: {
+					sourceMap: 'sourcemap.vanilla.js'
 				}
 			},
 			jquery: {
 				files: {
 					'jquery/dest/heart.min.js': ['jquery/lib/heart.js', 'jquery/lib/events.js']
+				},
+				options: {
+					sourceMap: 'sourcemap.jquery.js'
 				}
 			}
 		}

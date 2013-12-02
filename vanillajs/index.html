@@ -125,13 +125,13 @@
 
 			var heart = document.querySelector( ".heart" );
 
-			var h = new window.Heart({
+			window.h = new window.Heart({
 				element: heart,
 				scrollable: heart.querySelector( ".scroller" ),
 				start: true
 			});
 
-			h.bindEvents();
+			window.h.bindEvents();
 
 		});
 

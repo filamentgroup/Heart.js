@@ -8,7 +8,57 @@
 	}
 
 	var heart, proto, transformSupport,
-			raf = "requestAnimationFrame" in w && !!Function.prototype.bind;
+			raf = "requestAnimationFrame" in w && !!Function.prototype.bind,
+			pxInEm;
+
+
+	pxInEm = (function(){
+		var ret,
+			div = doc.createElement('div'),
+			body = doc.body,
+			docElem = doc.documentElement,
+			originalHTMLFontSize = docElem.style.fontSize,
+			originalBodyFontSize = body && body.style.fontSize,
+			fakeUsed = false;
+
+		div.style.cssText = "position:absolute;font-size:1em;width:1em";
+
+		if( !body ){
+			body = fakeUsed = doc.createElement( "body" );
+			body.style.background = "none";
+		}
+
+		// 1em in a media query is the value of the default font size of the browser
+		// reset docElem and body to ensure the correct value is returned
+		docElem.style.fontSize = "100%";
+		body.style.fontSize = "100%";
+
+		body.appendChild( div );
+
+		docElem.insertBefore( body, docElem.firstChild );
+
+		ret = div.offsetWidth;
+
+		if( fakeUsed ){
+			docElem.removeChild( body );
+		}
+		else {
+			body.removeChild( div );
+		}
+
+		// restore the original values
+		docElem.style.fontSize = originalHTMLFontSize;
+		if( originalBodyFontSize ) {
+			body.style.fontSize = originalBodyFontSize;
+		}
+
+
+		//also update eminpx before returning
+		ret = parseFloat(ret);
+
+		return ret;
+	}());
+
 
 	transformSupport = (function() {
 		var fakeBody,
@@ -86,9 +136,8 @@
 
 		// move the head to the tail
 		this.scrollable.appendChild( head );
-
 		// make sure the scroll left accounts for the movement of the scrolling
-		this._setOffset( this.currentScrollLeft - head.offsetWidth );
+		this._setOffset( this.currentScrollLeft - head.offsetWidth - pxInEm );
 
 		// set the new head of the list
 		this.headWidth = this._head().offsetWidth;
