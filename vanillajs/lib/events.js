@@ -30,6 +30,23 @@
 		if( e.type == "mouseup" ) {
 			clicked = false;
 		}
+		if( e.type == "mouseout" ) {
+			var moveTo = event.toElement || event.relatedTarget,
+				contains = function( el, parent ) {
+				if( parent ) {
+					while( ( parent = parent.parentNode ) ) {
+						if( parent === el ) {
+							return true;
+						}
+					}
+				}
+				return false;
+			};
+
+			if( !contains( this, moveTo ) ) {
+				clicked = false;
+			}
+		}
 	};
 
 }(this));

@@ -188,6 +188,7 @@
 		} );
 		this.element.addEventListener( "mousemove", w.mouseDrag );
 		this.element.addEventListener( "mouseup", w.mouseDrag );
+		this.element.addEventListener( "mouseout", w.mouseDrag );
 		this.element.addEventListener( "dragmove", function(e){
 			e.stopPropagation();
 			var detail = e.detail, csl;
