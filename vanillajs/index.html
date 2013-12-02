@@ -114,11 +114,9 @@
 		</div>
 		
 		
-		<!--[if IE 8]><script src="lib/polyfills/eventpolyfill.js"></script><![endif]-->
-		<script src="lib/polyfills/customEvent.js"></script>
-
-		<script src="lib/heart.js"></script>
-		<script src="lib/events.js"></script>
+		<!--[if IE 8]><script src="dest/heart.ie8.min.js"></script><![endif]-->
+		<!--[if IE 9]><script src="dest/heart.min.js"></script><![endif]-->
+		<!--[if !IE]><!--><script src="dest/heart.min.js"></script><!--<![endif]-->
 
 
 		<script>
@@ -127,13 +125,13 @@
 
 			var heart = document.querySelector( ".heart" );
 
-			var h = new window.Heart({
+			window.h = new window.Heart({
 				element: heart,
 				scrollable: heart.querySelector( ".scroller" ),
 				start: true
 			});
 
-			h.bindEvents();
+			window.h.bindEvents();
 
 		});
 
