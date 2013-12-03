@@ -117,7 +117,7 @@
 		// if the current scrolling value is larger than the stored width
 		// for the head of the list by a small buffer, move the out of view
 		// head to the tail of the list
-		if( this.currentScrollLeft > this.headWidth + 20 ) {
+		if( this.currentScrollLeft > this.headWidth*2 ) {
 			if( raf ) {
 				this.currentraf = w.requestAnimationFrame( this._moveHead.bind(this) );
 			} else {
@@ -172,19 +172,19 @@
 		var self = this;
 		var el = $( this.element );
 		var currentScrollLeft;
-		el.on( "mouseover" , function(e){
+		el.on( "mouseover dragstart" , function(e){
 			self.stop();
 		});
-		el.on( "mouseout" , function(e){
+		el.on( "mouseout dragend" , function(e){
 			self.start();
 		});
-		el.on( "mousedown", function(e){
+		el.on( "mousedown dragstart", function(e){
 			e.stopPropagation();
 			currentScrollLeft = self.currentScrollLeft;
 			w.mouseDrag(e);
 		});
 		el.on( "mouseout", w.mouseDrag );
-		el.on( "mousemove mouseup", w.mouseDrag );
+		el.on( "mousemove mouseup dragend", w.mouseDrag );
 		el.on( "dragmove", function(e, detail){
 			e.stopPropagation();
 			var csl;
@@ -200,6 +200,17 @@
 			off part of the first item — setting the value to zero prevents that. */
 			self._setOffset( csl - detail.deltaX < 0 ? 1 : csl - detail.deltaX );
 		});
+
+		el
+			.on( "touchstart touchend", w.touchEvents )
+			.on( "touchmove", function( e ){
+				var data = w.touchEvents( e );
+
+				if( Math.abs( data.deltaX ) > 35 && Math.abs( data.deltaY ) < 35 && data.touches.length === 1 ){
+					return false;
+				}
+				e.stopPropagation();
+			} );
 	};
 
 	proto.start = function() {

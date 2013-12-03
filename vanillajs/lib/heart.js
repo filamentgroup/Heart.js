@@ -122,7 +122,7 @@
 		// if the current scrolling value is larger than the stored width
 		// for the head of the list by a small buffer, move the out of view
 		// head to the tail of the list
-		if( this.currentScrollLeft > this.headWidth + 20 ) {
+		if( this.currentScrollLeft > this.headWidth*2 ) {
 			if( raf ) {
 				this.currentraf = w.requestAnimationFrame( this._moveHead.bind(this) );
 			} else {
@@ -150,7 +150,6 @@
 	proto._setSlideLeft = function( value ) {
 		var curr = ( this.scrollable.style.transform || "0" ).match(/([0-9])/); //TODO: There must be a better way of doing this.
 		this.scrollable.style.webkitTransform = "translateX(" + -value + "px)";
-		this.scrollable.style.MozTransform = "translateX(" + -value + "px)";
 		this.scrollable.style.transform = "translateX(" + -value + "px)"; // TODO: This should probably loop.
 
 		this.currentScrollLeft = curr = value;
@@ -172,24 +171,45 @@
 		this.currentraf = w.requestAnimationFrame( this._rafbeat.bind(this) );
 	};
 
+	proto._snapBack = function(){
+		var scroller = this.scrollable,
+			snapEnd = function( e ) {
+				var el = e.target,
+					type = e.propertyName.indexOf("webkit") > -1 ? "webkitTransitionEnd" : e.type;
+
+				el.style.webkitTransition = "";
+				el.style.transition = "";
+
+				el.removeEventListener( type, snapEnd );
+			};
+
+		// TODO: Should non-transition browsers get an animated snap, or just immediately reset?
+		scroller.addEventListener( "webkitTransitionEnd", snapEnd );
+		scroller.addEventListener( "transitionend", snapEnd );
+
+		scroller.style.webkitTransition = "-webkit-transform linear .1s";
+		scroller.style.transition = "transform linear .1s";
+
+		this._setOffset( -1 );
+	};
+
 	proto.bindEvents = function(){
-		var self = this;
-		var currentScrollLeft;
-		this.element.addEventListener( "mouseover" , function(e){
-			self.stop();
-		});
-		this.element.addEventListener( "mouseout" , function(e){
-			self.start();
-		});
-		this.element.addEventListener( "mousedown", function(e){
+		var self = this,
+			el = this.element,
+			currentScrollLeft;
+
+		var start = function( e ){
 			e.stopPropagation();
 			currentScrollLeft = self.currentScrollLeft;
 			w.mouseDrag(e);
-		} );
-		this.element.addEventListener( "mousemove", w.mouseDrag );
-		this.element.addEventListener( "mouseup", w.mouseDrag );
-		this.element.addEventListener( "mouseout" , w.mouseDrag );
-		this.element.addEventListener( "dragmove", function(e){
+		};
+
+		// Drag Events
+		el.addEventListener( "dragend", function() {
+			self.start();
+		});
+		el.addEventListener( "dragstart", start );
+		el.addEventListener( "dragmove", function(e){
 			e.stopPropagation();
 			var detail = e.detail, csl;
 
@@ -199,12 +219,42 @@
 				csl = self.currentScrollLeft;
 			}
 
-			/* Set the scroll position to the current left position minus the movement amount, which may be positive or negative.
-			A negative total would mean scrolling past the first item, so instead set the scroll to zero. This could be set to only 
-			set a value when the total is greater than zero, but scrubbing back to the start of the ticker too quickly might cut 
-			off part of the first item — setting the value to zero prevents that. */
-			self._setOffset( csl - detail.deltaX < 0 ? 1 : csl - detail.deltaX );
+			self._setOffset( csl - detail.deltaX );
 		});
+
+		// Mouse Events
+		el.addEventListener( "mousemove", w.mouseDrag );
+		el.addEventListener( "mouseover", function() {
+			self.stop();
+		});
+		el.addEventListener( "mousedown", start );
+		el.addEventListener( "mouseout" , function( e ){
+			self.start();
+			w.mouseDrag.call( this, e );
+		});
+		el.addEventListener( "mouseup", function( e ) {
+			var csl = self.currentScrollLeft;
+
+			if( csl < 0 ) {
+				self._snapBack();
+			}
+			w.mouseDrag.call( this, e );
+		});
+
+		// Touch Events
+		el.addEventListener( "touchstart", w.touchEvents );
+		el.addEventListener( "touchend", w.touchEvents );
+		el.addEventListener( "touchmove", function( e ){
+			var data = w.touchEvents.call( this, e );
+
+			if( data.deltaX ){
+				if( Math.abs( data.deltaX ) > 35 && Math.abs( data.deltaY ) < 35 && data.touches.length === 1 ){
+					return false;
+				}
+			}
+			e.stopPropagation();
+		});
+
 	};
 
 	proto.start = function() {
