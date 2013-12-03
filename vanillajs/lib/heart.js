@@ -173,23 +173,36 @@
 	};
 
 	proto.bindEvents = function(){
-		var self = this;
-		var currentScrollLeft;
-		this.element.addEventListener( "mouseover" , function(e){
-			self.stop();
-		});
-		this.element.addEventListener( "mouseout" , function(e){
-			self.start();
-		});
-		this.element.addEventListener( "mousedown", function(e){
+		var self = this,
+			el = this.element,
+			currentScrollLeft;
+
+		var start = function( e ){
 			e.stopPropagation();
 			currentScrollLeft = self.currentScrollLeft;
 			w.mouseDrag(e);
-		} );
-		this.element.addEventListener( "mousemove", w.mouseDrag );
-		this.element.addEventListener( "mouseup", w.mouseDrag );
-		this.element.addEventListener( "mouseout" , w.mouseDrag );
-		this.element.addEventListener( "dragmove", function(e){
+		};
+
+		el.addEventListener( "mouseover" , function( e ){
+			self.stop();
+		});
+		el.addEventListener( "dragstart" , function( e ){
+			self.stop();
+		});
+		el.addEventListener( "mouseout" , function( e ){
+			self.start();
+		});
+		el.addEventListener( "dragend" , function(e){
+			self.start();
+		});
+
+		el.addEventListener( "mousedown", start );
+		el.addEventListener( "dragstart", start );
+
+		el.addEventListener( "mousemove", w.mouseDrag );
+		el.addEventListener( "mouseup", w.mouseDrag );
+		el.addEventListener( "mouseout" , w.mouseDrag );
+		el.addEventListener( "dragmove", function(e){
 			e.stopPropagation();
 			var detail = e.detail, csl;
 
@@ -205,6 +218,20 @@
 			off part of the first item — setting the value to zero prevents that. */
 			self._setOffset( csl - detail.deltaX < 0 ? 1 : csl - detail.deltaX );
 		});
+
+		el.addEventListener( "touchstart", w.touchEvents );
+		el.addEventListener( "touchend", w.touchEvents );
+
+		el.addEventListener( "touchmove", function( e ){
+			var data = w.touchEvents.call( this, e );
+
+			if( data.deltaX ){
+				if( Math.abs( data.deltaX ) > 35 && Math.abs( data.deltaY ) < 35 && data.touches.length === 1 ){
+					return false;
+				}
+			}
+			e.stopPropagation();
+		} );
 	};
 
 	proto.start = function() {

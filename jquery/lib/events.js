@@ -1,3 +1,46 @@
+/*
+ * responsive-carousel touch drag extension
+ * https://github.com/filamentgroup/responsive-carousel
+ *
+ * Copyright (c) 2012 Filament Group, Inc.
+ * Licensed under the MIT, GPL licenses.
+ */
+
+(function($, w) {
+	var origin,
+		data = {},
+		deltaY,
+		xPerc,
+		yPerc,
+		emitEvents = function( e ){
+			var touches = e.touches || e.originalEvent.touches,
+				$elem = $( e.target );
+
+			if( e.type === "touchstart" ){
+				origin = {
+					x : touches[ 0 ].pageX,
+					y: touches[ 0 ].pageY
+				};
+			}
+
+			if( touches[ 0 ] && touches[ 0 ].pageX ){
+				data.touches = touches;
+				data.deltaX = touches[ 0 ].pageX - origin.x;
+				data.deltaY = touches[ 0 ].pageY - origin.y;
+				data.w = $elem.first().width();
+				data.h = $elem.first().height();
+				data.xPercent = data.deltaX / data.w;
+				data.yPercent = data.deltaY / data.h;
+				data.srcEvent = e;
+			}
+
+			$elem.trigger( "drag" + e.type.split( "touch" )[ 1 ], [data] );
+			return data;
+		};
+
+		w.touchEvents = emitEvents;
+
+ }(jQuery, this));
 
 (function($, w){
 	"use strict";
