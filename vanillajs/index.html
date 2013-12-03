@@ -29,8 +29,6 @@
 				text-overflow: ellipsis;
 				color: #fff;
 				line-height: 190%;
-
-				border: 1px solid red;
 			}
 
 			.heart {
@@ -38,8 +36,6 @@
        			overflow: hidden;
        			display: block;
 				background-color: #222;
-
-				border: 1px solid blue;
 			}
 			.scroller {
 				width: 8000%;
@@ -117,8 +113,9 @@
 			</div>
 		</div>
 
-		<script src="lib/events.js"></script>
-		<script src="lib/heart.js"></script>
+		<!--[if IE 8]><script src="dest/heart.ie8.min.js"></script><![endif]-->
+		<!--[if IE 9]><script src="dest/heart.min.js"></script><![endif]-->
+		<!--[if !IE]><!--><script src="dest/heart.min.js"></script><!--<![endif]-->
 
 		<script>
 
