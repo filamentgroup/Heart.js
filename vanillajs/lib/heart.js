@@ -122,7 +122,7 @@
 		// if the current scrolling value is larger than the stored width
 		// for the head of the list by a small buffer, move the out of view
 		// head to the tail of the list
-		if( this.currentScrollLeft > this.headWidth + 20 ) {
+		if( this.currentScrollLeft > this.headWidth*2 ) {
 			if( raf ) {
 				this.currentraf = w.requestAnimationFrame( this._moveHead.bind(this) );
 			} else {
