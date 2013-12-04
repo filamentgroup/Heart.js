@@ -90,6 +90,7 @@
 		this.interval = options.interval || 10;
 		this.element = options.element;
 		this.scrollable = options.scrollable || this.element.find( "ul" );
+		this.snapback = options.snapback === false ? false : true;
 
 		// store the value, less repainting
 		this.currentScrollLeft = this.scrollable.scrollLeft();
@@ -210,7 +211,7 @@
 			.on( "mouseup dragend", function(e){
 				var csl = self.currentScrollLeft;
 
-				if( csl < 0 ) {
+				if( csl < 0 && self.snapback ) {
 					self._snapBack();
 				}
 				w.mouseDrag.call( this, e );
@@ -225,7 +226,15 @@
 					csl = self.currentScrollLeft;
 				}
 
-				self._setOffset( csl - detail.deltaX );
+				if( self.snapback ){
+					self._setOffset( csl - detail.deltaX );
+				} else {
+					/* Set the scroll position to the current left position minus the movement amount, which may be positive or negative.
+					A negative total would mean scrolling past the first item, so instead set the scroll to zero. This could be set to only
+					set a value when the total is greater than zero, but scrubbing back to the start of the ticker too quickly might cut
+					off part of the first item — setting the value to zero prevents that. */
+					self._setOffset( csl - detail.deltaX < 0 ? 0 : csl - detail.deltaX );
+				}
 			});
 
 		el
