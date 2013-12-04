@@ -92,7 +92,7 @@
 		return !!ret;
 	}());
 
-	heart = w.Heart = function( options ) {
+	heart = function( options ) {
 		this.distance = options.distance || 1;
 		this.interval = options.interval || 10;
 		this.bufferLength = options.bufferLength || 2;
@@ -297,4 +297,6 @@
 			w.clearInterval( this.intervalId );
 		}
 	};
+
+	w.Heart = heart;
 })( this );
