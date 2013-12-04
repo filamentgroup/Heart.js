@@ -168,38 +168,65 @@
 		this.currentraf = w.requestAnimationFrame( this._rafbeat.bind(this) );
 	};
 
+	proto._snapBack = function(){
+		var scroller = this.scrollable,
+			snapEnd = function( e ) {
+				var el = $( e.target ),
+					type = e.originalEvent.propertyName.indexOf("webkit") > -1 ? "webkitTransitionEnd" : e.type;
+
+				el.css( "webkitTransition", "" );
+				el.css( "transition", "" );
+
+				el.off( type, snapEnd );
+			};
+
+		// TODO: Should non-transition browsers get an animated snap, or just immediately reset?
+		scroller.on( "webkitTransitionEnd", snapEnd );
+		scroller.on( "transitionend", snapEnd );
+
+		scroller.css( "webkitTransition", "-webkit-transform linear .1s" );
+		scroller.css( "transition", "transform linear .1s" );
+
+		this._setOffset( -1 );
+	};
+
 	proto.bindEvents = function(){
 		var self = this;
 		var el = $( this.element );
 		var currentScrollLeft;
-		el.on( "mouseover dragstart" , function(e){
-			self.stop();
-		});
-		el.on( "mouseout dragend" , function(e){
-			self.start();
-		});
-		el.on( "mousedown dragstart", function(e){
-			e.stopPropagation();
-			currentScrollLeft = self.currentScrollLeft;
-			w.mouseDrag(e);
-		});
-		el.on( "mouseout", w.mouseDrag );
-		el.on( "mousemove mouseup dragend", w.mouseDrag );
-		el.on( "dragmove", function(e, detail){
-			e.stopPropagation();
-			var csl;
+		el
+			.on( "mouseover dragstart" , function(e){
+				self.stop();
+			})
+			.on( "mouseout dragend" , function(e){
+				self.start();
+			})
+			.on( "mousedown dragstart", function(e){
+				e.stopPropagation();
+				currentScrollLeft = self.currentScrollLeft;
+				w.mouseDrag(e);
+			})
+			.on( "mouseout mousemove", w.mouseDrag )
+			.on( "mouseup dragend", function(e){
+				var csl = self.currentScrollLeft;
 
-			if( currentScrollLeft ) {
-				csl = currentScrollLeft;
-			} else {
-				csl = self.currentScrollLeft;
-			}
-			/* Set the scroll position to the current left position minus the movement amount, which may be positive or negative.
-			A negative total would mean scrolling past the first item, so instead set the scroll to zero. This could be set to only 
-			set a value when the total is greater than zero, but scrubbing back to the start of the ticker too quickly might cut 
-			off part of the first item — setting the value to zero prevents that. */
-			self._setOffset( csl - detail.deltaX < 0 ? 1 : csl - detail.deltaX );
-		});
+				if( csl < 0 ) {
+					self._snapBack();
+				}
+				w.mouseDrag.call( this, e );
+			})
+			.on( "dragmove", function(e, detail){
+				e.stopPropagation();
+				var csl;
+
+				if( currentScrollLeft ) {
+					csl = currentScrollLeft;
+				} else {
+					csl = self.currentScrollLeft;
+				}
+
+				self._setOffset( csl - detail.deltaX );
+			});
 
 		el
 			.on( "touchstart touchend", w.touchEvents )
