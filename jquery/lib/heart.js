@@ -31,7 +31,9 @@
 
 		body.appendChild( div );
 
-		docElem.insertBefore( body, docElem.firstChild );
+		if( fakeUsed ){
+			docElem.insertBefore( body, docElem.firstChild );
+		}
 
 		ret = div.offsetWidth;
 

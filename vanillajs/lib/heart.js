@@ -28,14 +28,16 @@
 			body.style.background = "none";
 		}
 
-		// 1em in a media query is the value of the default font size of the browser
+		// 1em is the value of the default font size of the browser
 		// reset docElem and body to ensure the correct value is returned
 		docElem.style.fontSize = "100%";
 		body.style.fontSize = "100%";
 
 		body.appendChild( div );
 
-		docElem.insertBefore( body, docElem.firstChild );
+		if( fakeUsed ){
+			docElem.insertBefore( body, docElem.firstChild );
+		}
 
 		ret = div.offsetWidth;
 
