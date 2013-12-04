@@ -198,17 +198,32 @@
 			el = this.element,
 			currentScrollLeft;
 
-		var start = function( e ){
+		var startdrag = function( e ){
 			e.stopPropagation();
 			currentScrollLeft = self.currentScrollLeft;
 			w.mouseDrag(e);
+		};
+
+		var enddrag = function(e) {
+			var csl = self.currentScrollLeft;
+
+			if( csl < 0 ) {
+				self._snapBack();
+			}
+			w.mouseDrag.call( this, e );
 		};
 
 		// Drag Events
 		el.addEventListener( "dragend", function() {
 			self.start();
 		});
-		el.addEventListener( "dragstart", start );
+		el.addEventListener( "dragend", enddrag );
+
+		el.addEventListener( "dragstart", startdrag );
+		el.addEventListener( "dragstart", function(){
+			self.stop();
+		});
+
 		el.addEventListener( "dragmove", function(e){
 			e.stopPropagation();
 			var detail = e.detail, csl;
@@ -227,19 +242,12 @@
 		el.addEventListener( "mouseover", function() {
 			self.stop();
 		});
-		el.addEventListener( "mousedown", start );
+		el.addEventListener( "mousedown", startdrag );
 		el.addEventListener( "mouseout" , function( e ){
 			self.start();
 			w.mouseDrag.call( this, e );
 		});
-		el.addEventListener( "mouseup", function( e ) {
-			var csl = self.currentScrollLeft;
-
-			if( csl < 0 ) {
-				self._snapBack();
-			}
-			w.mouseDrag.call( this, e );
-		});
+		el.addEventListener( "mouseup", enddrag );
 
 		// Touch Events
 		el.addEventListener( "touchstart", w.touchEvents );
