@@ -31,7 +31,9 @@
 
 		body.appendChild( div );
 
-		docElem.insertBefore( body, docElem.firstChild );
+		if( fakeUsed ){
+			docElem.insertBefore( body, docElem.firstChild );
+		}
 
 		ret = div.offsetWidth;
 
@@ -88,8 +90,10 @@
 	heart = w.Heart = function( options ) {
 		this.distance = options.distance || 1;
 		this.interval = options.interval || 10;
+		this.bufferLength = options.bufferLength || 2;
 		this.element = options.element;
 		this.scrollable = options.scrollable || this.element.find( "ul" );
+		this.snapback = options.snapback === false ? false : true;
 
 		// store the value, less repainting
 		this.currentScrollLeft = this.scrollable.scrollLeft();
@@ -117,7 +121,7 @@
 		// if the current scrolling value is larger than the stored width
 		// for the head of the list by a small buffer, move the out of view
 		// head to the tail of the list
-		if( this.currentScrollLeft > this.headWidth*2 ) {
+		if( this.currentScrollLeft > this.headWidth*this.bufferLength ) {
 			if( raf ) {
 				this.currentraf = w.requestAnimationFrame( this._moveHead.bind(this) );
 			} else {
@@ -168,38 +172,73 @@
 		this.currentraf = w.requestAnimationFrame( this._rafbeat.bind(this) );
 	};
 
+	proto._snapBack = function(){
+		var scroller = this.scrollable,
+			snapEnd = function( e ) {
+				var el = $( e.target ),
+					type = e.originalEvent.propertyName.indexOf("webkit") > -1 ? "webkitTransitionEnd" : e.type;
+
+				el.css( "webkitTransition", "" );
+				el.css( "transition", "" );
+
+				el.off( type, snapEnd );
+			};
+
+		// TODO: Should non-transition browsers get an animated snap, or just immediately reset?
+		scroller.on( "webkitTransitionEnd", snapEnd );
+		scroller.on( "transitionend", snapEnd );
+
+		scroller.css( "webkitTransition", "-webkit-transform linear .1s" );
+		scroller.css( "transition", "transform linear .1s" );
+
+		this._setOffset( -1 );
+	};
+
 	proto.bindEvents = function(){
 		var self = this;
 		var el = $( this.element );
 		var currentScrollLeft;
-		el.on( "mouseover dragstart" , function(e){
-			self.stop();
-		});
-		el.on( "mouseout dragend" , function(e){
-			self.start();
-		});
-		el.on( "mousedown dragstart", function(e){
-			e.stopPropagation();
-			currentScrollLeft = self.currentScrollLeft;
-			w.mouseDrag(e);
-		});
-		el.on( "mouseout", w.mouseDrag );
-		el.on( "mousemove mouseup dragend", w.mouseDrag );
-		el.on( "dragmove", function(e, detail){
-			e.stopPropagation();
-			var csl;
+		el
+			.on( "mouseover dragstart" , function(e){
+				self.stop();
+			})
+			.on( "mouseout dragend" , function(e){
+				self.start();
+			})
+			.on( "mousedown dragstart", function(e){
+				e.stopPropagation();
+				currentScrollLeft = self.currentScrollLeft;
+				w.mouseDrag(e);
+			})
+			.on( "mouseout mousemove", w.mouseDrag )
+			.on( "mouseup dragend", function(e){
+				var csl = self.currentScrollLeft;
 
-			if( currentScrollLeft ) {
-				csl = currentScrollLeft;
-			} else {
-				csl = self.currentScrollLeft;
-			}
-			/* Set the scroll position to the current left position minus the movement amount, which may be positive or negative.
-			A negative total would mean scrolling past the first item, so instead set the scroll to zero. This could be set to only 
-			set a value when the total is greater than zero, but scrubbing back to the start of the ticker too quickly might cut 
-			off part of the first item — setting the value to zero prevents that. */
-			self._setOffset( csl - detail.deltaX < 0 ? 1 : csl - detail.deltaX );
-		});
+				if( csl < 0 && self.snapback ) {
+					self._snapBack();
+				}
+				w.mouseDrag.call( this, e );
+			})
+			.on( "dragmove", function(e, detail){
+				e.stopPropagation();
+				var csl;
+
+				if( currentScrollLeft ) {
+					csl = currentScrollLeft;
+				} else {
+					csl = self.currentScrollLeft;
+				}
+
+				if( self.snapback ){
+					self._setOffset( csl - detail.deltaX );
+				} else {
+					/* Set the scroll position to the current left position minus the movement amount, which may be positive or negative.
+					A negative total would mean scrolling past the first item, so instead set the scroll to zero. This could be set to only
+					set a value when the total is greater than zero, but scrubbing back to the start of the ticker too quickly might cut
+					off part of the first item — setting the value to zero prevents that. */
+					self._setOffset( csl - detail.deltaX < 0 ? 0 : csl - detail.deltaX );
+				}
+			});
 
 		el
 			.on( "touchstart touchend", w.touchEvents )

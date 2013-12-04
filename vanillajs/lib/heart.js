@@ -28,14 +28,16 @@
 			body.style.background = "none";
 		}
 
-		// 1em in a media query is the value of the default font size of the browser
+		// 1em is the value of the default font size of the browser
 		// reset docElem and body to ensure the correct value is returned
 		docElem.style.fontSize = "100%";
 		body.style.fontSize = "100%";
 
 		body.appendChild( div );
 
-		docElem.insertBefore( body, docElem.firstChild );
+		if( fakeUsed ){
+			docElem.insertBefore( body, docElem.firstChild );
+		}
 
 		ret = div.offsetWidth;
 
@@ -93,8 +95,10 @@
 	heart = w.Heart = function( options ) {
 		this.distance = options.distance || 1;
 		this.interval = options.interval || 10;
+		this.bufferLength = options.bufferLength || 2;
 		this.element = options.element;
 		this.scrollable = options.scrollable || this.element.querySelector( "ul" );
+		this.snapback = options.snapback === false ? false : true;
 
 		// store the value, less repainting
 		this.currentScrollLeft = this.scrollable.scrollLeft;
@@ -122,7 +126,7 @@
 		// if the current scrolling value is larger than the stored width
 		// for the head of the list by a small buffer, move the out of view
 		// head to the tail of the list
-		if( this.currentScrollLeft > this.headWidth*2 ) {
+		if( this.currentScrollLeft > this.headWidth*this.bufferLength ) {
 			if( raf ) {
 				this.currentraf = w.requestAnimationFrame( this._moveHead.bind(this) );
 			} else {
@@ -198,21 +202,36 @@
 			el = this.element,
 			currentScrollLeft;
 
-		var start = function( e ){
+		var startdrag = function( e ){
 			e.stopPropagation();
 			currentScrollLeft = self.currentScrollLeft;
 			w.mouseDrag(e);
+		};
+
+		var enddrag = function(e) {
+			var csl = self.currentScrollLeft;
+
+			if( csl < 0 && self.snapback ) {
+				self._snapBack();
+			}
+			w.mouseDrag.call( this, e );
 		};
 
 		// Drag Events
 		el.addEventListener( "dragend", function() {
 			self.start();
 		});
-		el.addEventListener( "dragstart", start );
+		el.addEventListener( "dragend", enddrag );
+
+		el.addEventListener( "dragstart", startdrag );
+		el.addEventListener( "dragstart", function(){
+			self.stop();
+		});
+
 		el.addEventListener( "dragmove", function(e){
 			e.stopPropagation();
 			var detail = e.detail,
-				resistance, threshold, csl;
+				resistance, csl;
 
 			if( currentScrollLeft ) {
 				csl = currentScrollLeft;
@@ -220,8 +239,16 @@
 				csl = self.currentScrollLeft;
 			}
 
-			resistance = csl - detail.deltaX > 0 ? 0 : csl - detail.deltaX / 2;
-			self._setOffset( csl - detail.deltaX + resistance );
+			if( self.snapback ){
+				resistance = csl - detail.deltaX > 0 ? 0 : csl - detail.deltaX / 2;
+				self._setOffset( csl - detail.deltaX + resistance );
+			} else {
+				/* Set the scroll position to the current left position minus the movement amount, which may be positive or negative.
+				A negative total would mean scrolling past the first item, so instead set the scroll to zero. This could be set to only
+				set a value when the total is greater than zero, but scrubbing back to the start of the ticker too quickly might cut
+				off part of the first item — setting the value to one prevents that. */
+				self._setOffset( csl - detail.deltaX < 0 ? 1 : csl - detail.deltaX );
+			}
 		});
 
 		// Mouse Events
@@ -229,19 +256,12 @@
 		el.addEventListener( "mouseover", function() {
 			self.stop();
 		});
-		el.addEventListener( "mousedown", start );
+		el.addEventListener( "mousedown", startdrag );
 		el.addEventListener( "mouseout" , function( e ){
 			self.start();
 			w.mouseDrag.call( this, e );
 		});
-		el.addEventListener( "mouseup", function( e ) {
-			var csl = self.currentScrollLeft;
-
-			if( csl < 0 ) {
-				self._snapBack();
-			}
-			w.mouseDrag.call( this, e );
-		});
+		el.addEventListener( "mouseup", enddrag );
 
 		// Touch Events
 		el.addEventListener( "touchstart", w.touchEvents );
