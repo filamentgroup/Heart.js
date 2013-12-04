@@ -106,7 +106,7 @@
 	asyncTest( "moves head to tail", function() {
 		var head = instance._head();
 
-		instance.currentScrollLeft = instance.headWidth*2;
+		instance.currentScrollLeft = instance.headWidth*instance.bufferLength;
 
 		equal(head, instance._head());
 

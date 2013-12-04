@@ -88,6 +88,7 @@
 	heart = w.Heart = function( options ) {
 		this.distance = options.distance || 1;
 		this.interval = options.interval || 10;
+		this.bufferLength = options.bufferLength || 2;
 		this.element = options.element;
 		this.scrollable = options.scrollable || this.element.find( "ul" );
 		this.snapback = options.snapback === false ? false : true;
@@ -118,7 +119,7 @@
 		// if the current scrolling value is larger than the stored width
 		// for the head of the list by a small buffer, move the out of view
 		// head to the tail of the list
-		if( this.currentScrollLeft > this.headWidth*2 ) {
+		if( this.currentScrollLeft > this.headWidth*this.bufferLength ) {
 			if( raf ) {
 				this.currentraf = w.requestAnimationFrame( this._moveHead.bind(this) );
 			} else {
