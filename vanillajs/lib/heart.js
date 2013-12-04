@@ -211,7 +211,8 @@
 		el.addEventListener( "dragstart", start );
 		el.addEventListener( "dragmove", function(e){
 			e.stopPropagation();
-			var detail = e.detail, csl;
+			var detail = e.detail,
+				resistance, threshold, csl;
 
 			if( currentScrollLeft ) {
 				csl = currentScrollLeft;
@@ -219,7 +220,8 @@
 				csl = self.currentScrollLeft;
 			}
 
-			self._setOffset( csl - detail.deltaX );
+			resistance = csl - detail.deltaX > 0 ? 0 : csl - detail.deltaX / 2;
+			self._setOffset( csl - detail.deltaX + resistance );
 		});
 
 		// Mouse Events
