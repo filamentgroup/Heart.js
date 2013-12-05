@@ -57,11 +57,10 @@ document.addEventListener( "DOMContentLoaded", function( e ){
         bufferLength: 2, // The buffer, in individual ticker item widths, before items are removed from the front of the stack and appended to the end of the ticker.
         snapback: true // Adds a snapping effect when the user attempts to scrub backwards beyond the first ticker item, rather than just halting.
     });
-
     window.h.bindEvents();
 });
 ```
 
-### Test suite
+### Test Suites
 
-Test suites is available at <a href="http://filamentgroup.github.io/Heart.js/test/vanillajs/">test/vanillajs</a> and <a href="http://filamentgroup.github.io/Heart.js/test/jquery">test/jquery</a>
+Test suites for both versions of the plugin are available at <a href="http://filamentgroup.github.io/Heart.js/test/vanillajs/">test/vanillajs</a> and <a href="http://filamentgroup.github.io/Heart.js/test/jquery">test/jquery</a>
