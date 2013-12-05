@@ -240,8 +240,8 @@
 			}
 
 			if( self.snapback ){
-				resistance = csl - detail.deltaX > 0 ? 0 : csl - detail.deltaX / 2;
-				self._setOffset( csl - detail.deltaX - resistance );
+				resistance = csl - detail.deltaX > 0 ? 1 : 2;
+				self._setOffset( ( csl - detail.deltaX ) / resistance );
 			} else {
 				/* Set the scroll position to the current left position minus the movement amount, which may be positive or negative.
 				A negative total would mean scrolling past the first item, so instead set the scroll to zero. This could be set to only
