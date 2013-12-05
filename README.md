@@ -60,7 +60,7 @@ document.addEventListener( "DOMContentLoaded", function( e ){
 
     window.h.bindEvents();
 });
-
+```
 
 ### Test suite
 
