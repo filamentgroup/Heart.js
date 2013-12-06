@@ -15,6 +15,7 @@
 		emitEvents = function( e ){
 			var touches = e.touches || e.originalEvent.touches,
 				$elem = $( e.target );
+			e.stopPropagation();
 
 			if( e.type === "touchstart" ){
 				origin = {
@@ -35,7 +36,7 @@
 			}
 
 			$elem.trigger( "drag" + e.type.split( "touch" )[ 1 ], [data] );
-			return data;
+			return false;
 		};
 
 		w.touchEvents = emitEvents;

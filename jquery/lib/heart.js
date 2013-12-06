@@ -210,8 +210,9 @@
 				currentScrollLeft = self.currentScrollLeft;
 				w.mouseDrag(e);
 			})
-			.on( "mouseout mousemove", w.mouseDrag )
+			.on( "mousemove", w.mouseDrag )
 			.on( "mouseup dragend", function(e){
+				e.stopPropagation();
 				var csl = self.currentScrollLeft;
 
 				if( csl < 0 && self.snapback ) {
@@ -243,11 +244,7 @@
 		el
 			.on( "touchstart touchend", w.touchEvents )
 			.on( "touchmove", function( e ){
-				var data = w.touchEvents( e );
-
-				if( Math.abs( data.deltaX ) > 35 && Math.abs( data.deltaY ) < 35 && data.touches.length === 1 ){
-					return false;
-				}
+				w.touchEvents( e );
 				e.stopPropagation();
 			} );
 	};
@@ -257,6 +254,7 @@
 		if( raf ) {
 			this.currentraf = w.requestAnimationFrame( this._rafbeat.bind(this) );
 		} else {
+			w.clearInterval( this.intervalId );
 			this.intervalId = w.setInterval(function() {
 				self._tick();
 			}, this.interval );
