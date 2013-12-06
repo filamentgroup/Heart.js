@@ -224,7 +224,7 @@
 				e.stopPropagation();
 				var csl;
 
-				if( currentScrollLeft ) {
+				if( currentScrollLeft !== undefined ) {
 					csl = currentScrollLeft;
 				} else {
 					csl = self.currentScrollLeft;
