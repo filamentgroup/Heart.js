@@ -253,7 +253,7 @@
 
 		// Mouse Events
 		el.addEventListener( "mousemove", w.mouseDrag );
-		el.addEventListener( "mouseover", function() {
+		el.addEventListener( "mouseover", function(e) {
 			self.stop();
 		});
 		el.addEventListener( "mousedown", startdrag );
@@ -267,13 +267,7 @@
 		el.addEventListener( "touchstart", w.touchEvents );
 		el.addEventListener( "touchend", w.touchEvents );
 		el.addEventListener( "touchmove", function( e ){
-			var data = w.touchEvents.call( this, e );
-
-			if( data.deltaX ){
-				if( Math.abs( data.deltaX ) > 35 && Math.abs( data.deltaY ) < 35 && data.touches.length === 1 ){
-					return false;
-				}
-			}
+			w.touchEvents.call( this, e );
 			e.stopPropagation();
 		});
 
@@ -284,6 +278,7 @@
 		if( raf ) {
 			this.currentraf = w.requestAnimationFrame( this._rafbeat.bind(this) );
 		} else {
+			w.clearInterval( this.intervalId );
 			this.intervalId = w.setInterval(function() {
 				self._tick();
 			}, this.interval );

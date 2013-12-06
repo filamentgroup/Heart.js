@@ -14,6 +14,8 @@
 		xPerc,
 		yPerc,
 		emitEvents = function( e ){
+			e.preventDefault();
+			e.stopPropagation();
 			var touches = e.touches || e.originalEvent.touches,
 				elem = this;
 
@@ -39,8 +41,6 @@
 
 			var ev = new w.CustomEvent( "drag" + e.type.split( "touch" )[1], { detail: data, bubbles: true } );
 			this.dispatchEvent(ev);
-
-			return data;
 		};
 
 		w.touchEvents = emitEvents;
