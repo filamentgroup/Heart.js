@@ -233,7 +233,7 @@
 			var detail = e.detail,
 				resistance, csl;
 
-			if( currentScrollLeft ) {
+			if( currentScrollLeft !== undefined ) {
 				csl = currentScrollLeft;
 			} else {
 				csl = self.currentScrollLeft;
@@ -247,7 +247,7 @@
 				A negative total would mean scrolling past the first item, so instead set the scroll to zero. This could be set to only
 				set a value when the total is greater than zero, but scrubbing back to the start of the ticker too quickly might cut
 				off part of the first item — setting the value to one prevents that. */
-				self._setOffset( csl - detail.deltaX < 0 ? 1 : csl - detail.deltaX );
+				self._setOffset( csl - detail.deltaX < 0 ? 0 : csl - detail.deltaX );
 			}
 		});
 
