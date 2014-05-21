@@ -1,0 +1,5 @@
+.vimdir
+node_modules
+vanillajs/dest
+jquery/dest
+sourcemap*
