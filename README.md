@@ -1,7 +1,8 @@
-Heart.js
-========
+# Heart.js
 
 Get it? It’s a ticker. “Heart,” “ticker?” Eh, eh?
+
+[![Filament Group](http://filamentgroup.com/images/fg-logo-positive-sm-crop.png) ](http://www.filamentgroup.com/)
 
 ### Repo Setup
 
