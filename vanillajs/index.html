@@ -9,17 +9,14 @@
 		<style>
 			.heart {
 				display: block;
+				position: relative;
+				overflow: hidden;
 			}
-			span {
-				background: url( logo.png );
-				display: block;
-				width: 54px;
-				height: 41px;
+			.scroller {
+				width: 8000%;
 				float: left;
-				margin-right: .5em;
 			}
-
-			p {
+			.scroller p {
 				display: block;
 				float: left;
 				font-family: sans-serif;
@@ -31,18 +28,17 @@
 				color: #222;
 				line-height: 190%;
 			}
-
-			.heart {
-				position: relative;
-				overflow: hidden;
+			.scroller span {
+				background: url( logo.png );
 				display: block;
-			}
-			.scroller {
-				width: 8000%;
+				width: 54px;
+				height: 41px;
 				float: left;
+				margin-right: .5em;
 			}
-
-
+			pre {
+				white-space: pre-line;
+			}
 		</style>
 
 		<script src="/demo-head/loadfont.js"></script>
@@ -64,12 +60,12 @@
 		</div>
 <pre><code>
 &lt;div class="heart"&gt;
-  &lt;div class="scroller"&gt;
-    &lt;p&gt;&lt;span&gt;&amp;nbsp;&lt;/span&gt;Unde, repellendus earum odio aliquam eaque quibusdam fugit necessitatibus molestias dolorem consequatur facere delectus. Est, facilis inventore iure optio deserunt mollitia magnam!/&lt;p&gt;
-    &lt;p&gt;&lt;span&gt;&amp;nbsp;&lt;/span&gt;Autem, quae ad vel nihil accusantium assumenda velit doloribus doloremque rem saepe odio magni quam sint aperiam provident eum at soluta ducimus?/&lt;p&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="scroller"&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;&lt;span&gt;&amp;nbsp;&lt;/span&gt;Unde, repellendus earum odio aliquam eaque quibusdam fugit necessitatibus molestias dolorem consequatur facere delectus. Est, facilis inventore iure optio deserunt mollitia magnam!/&lt;p&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;&lt;span&gt;&amp;nbsp;&lt;/span&gt;Autem, quae ad vel nihil accusantium assumenda velit doloribus doloremque rem saepe odio magni quam sint aperiam provident eum at soluta ducimus?/&lt;p&gt;
     ...
     ...
-  &lt;/div&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
 		<div class="heart">
