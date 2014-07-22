@@ -4,12 +4,12 @@ body {
 	font-size: 100%;
 }
 .docs-main {
-	margin: 1em auto;
+	margin: 1em;
 	max-width: 46em;
 }
 @media (min-width: 48em){
 	.docs-main {
-		margin: 1em;
+		margin: 1em auto;
 	}
 }
 label {
