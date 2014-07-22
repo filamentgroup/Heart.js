@@ -5,9 +5,9 @@ body {
 }
 .docs-main {
 	margin: 1em;
-	max-width: 46em;
+	max-width: 48em;
 }
-@media (min-width: 48em){
+@media (min-width: 50em){
 	.docs-main {
 		margin: 1em auto;
 	}
