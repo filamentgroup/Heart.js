@@ -11,7 +11,7 @@ $ npm install
 $ grunt
 ```
 
-Check out `vanillajs/index.html` or `jquery/index.html` to see the pure JavaScript and jQuery versions, respectively.
+Check out [`vanillajs/index.html`](http://filamentgroup.github.io/Heart.js/vanillajs/index.html) or [`jquery/index.html`](http://filamentgroup.github.io/Heart.js/jquery/index.html) to see the pure JavaScript and jQuery versions, respectively.
 
 ### Invoking the plugin
 
