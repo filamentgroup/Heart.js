@@ -1,3 +1,5 @@
+:warning: This project is archived and the repository is no longer maintained. 
+
 # Heart.js
 
 Get it? It’s a ticker. “Heart,” “ticker?” Eh, eh?
